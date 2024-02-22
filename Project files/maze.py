@@ -84,16 +84,16 @@ def save_maze_to_file(maze, filename):
     np.savetxt(filename, maze, fmt='%d', delimiter=',')
 
 # Generate 50 grid world environments with unique start and end points
-num_mazes = 2  # Number of mazes to generate
-maze_size = 5  # Size of the maze 
+num_mazes = 1  # Number of mazes to generate
+maze_size = 101  # Size of the maze 
 mazes_with_start_end = generateMultiple(num_mazes, maze_size)
 
 # Visualize and save the first maze with start and end points
 visualize_maze(mazes_with_start_end[0][0])
-save_maze_to_file(mazes_with_start_end[0][0], 'maze_with_start_end_0.txt')
+save_maze_to_file(mazes_with_start_end[0][0], 'maze0.txt')
 
 # Visualize and save the second maze with start and end points, and so on...
 for i, (maze, _, _) in enumerate(mazes_with_start_end[1:], start=1):
     visualize_maze(maze)
-    save_maze_to_file(maze, f'maze_with_start_end_{i}.txt')
+    save_maze_to_file(maze, f'maze{i}.txt')
 
