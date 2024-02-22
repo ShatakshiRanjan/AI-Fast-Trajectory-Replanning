@@ -1,4 +1,5 @@
 import numpy as np
+from maze import generateMaze
 import matplotlib.pyplot as plt
 from queue import PriorityQueue
 
@@ -44,13 +45,13 @@ def a_star(maze, break_ties_smaller_g=True):
     return None
 
 def main():
-    maze_file = 'maze0.txt'  # Change this to the file name of the maze you want to use
-    maze = np.loadtxt(maze_file, delimiter=',', dtype=int)
-    
+    # Generate maze using generateMaze from the maze module
+    maze, _, _ = generateMaze(10, 10)  # Adjust the maze size as needed
+
     # Run A* with ties broken in favor of smaller g-values
     path_smaller_g = a_star(maze, break_ties_smaller_g=True)
     print("Path found with ties broken for smaller g-values:", path_smaller_g)
-    
+
     # Run A* with ties broken in favor of larger g-values
     path_larger_g = a_star(maze, break_ties_smaller_g=False)
     print("Path found with ties broken for larger g-values:", path_larger_g)
@@ -64,14 +65,14 @@ def main():
         for node in path_smaller_g:
             plt.plot(node[1], node[0], 'ro')  # Plotting the path
         plt.colorbar()
-        
+
         plt.subplot(1, 2, 2)
         plt.title("Path with ties broken for larger g-values")
         plt.imshow(maze, cmap='binary', origin='lower')
         for node in path_larger_g:
             plt.plot(node[1], node[0], 'ro')  # Plotting the path
         plt.colorbar()
-        
+
         plt.tight_layout()
         plt.show()
     else:

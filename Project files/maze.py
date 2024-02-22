@@ -1,6 +1,5 @@
 import numpy as np
 import random
-import matplotlib.pyplot as plt
 
 def generateMaze(num_rows, num_cols):
     maze = np.zeros((num_rows, num_cols), dtype=int)
@@ -68,31 +67,3 @@ def generateMaze(num_rows, num_cols):
     maze[end_row, end_col] = 3      # End point
 
     return maze, (start_row, start_col), (end_row, end_col)
-
-def generateMultiple(num_mazes, maze_size):
-    mazes = [generateMaze(maze_size, maze_size) for _ in range(num_mazes)]
-    return mazes
-
-# https://matplotlib.org/stable/
-def visualize_maze(maze):
-    plt.imshow(maze, cmap='binary', origin='lower')
-    plt.colorbar()
-    plt.show()
-
-# https://numpy.org/doc/stable/reference/generated/numpy.savetxt.html
-def save_maze_to_file(maze, filename):
-    np.savetxt(filename, maze, fmt='%d', delimiter=',')
-
-# Generate 50 grid world environments with unique start and end points
-num_mazes = 1  # Number of mazes to generate
-maze_size = 10  # Size of the maze 
-mazes_with_start_end = generateMultiple(num_mazes, maze_size)
-
-# Visualize and save the first maze with start and end points
-visualize_maze(mazes_with_start_end[0][0])
-save_maze_to_file(mazes_with_start_end[0][0], 'maze0.txt')
-
-# Visualize and save the second maze with start and end points, and so on...
-for i, (maze, _, _) in enumerate(mazes_with_start_end[1:], start=1):
-    visualize_maze(maze)
-    save_maze_to_file(maze, f'maze{i}.txt')
