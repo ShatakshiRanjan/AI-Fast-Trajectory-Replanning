@@ -85,7 +85,7 @@ def save_maze_to_file(maze, filename):
 
 # Generate 50 grid world environments with unique start and end points
 num_mazes = 1  # Number of mazes to generate
-maze_size = 101  # Size of the maze 
+maze_size = 10  # Size of the maze 
 mazes_with_start_end = generateMultiple(num_mazes, maze_size)
 
 # Visualize and save the first maze with start and end points
@@ -96,4 +96,3 @@ save_maze_to_file(mazes_with_start_end[0][0], 'maze0.txt')
 for i, (maze, _, _) in enumerate(mazes_with_start_end[1:], start=1):
     visualize_maze(maze)
     save_maze_to_file(maze, f'maze{i}.txt')
-
