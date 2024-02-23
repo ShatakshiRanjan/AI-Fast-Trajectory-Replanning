@@ -44,7 +44,7 @@ def a_star(maze, break_ties_smaller_g=True):
 
     return None
 
-def main():
+def calc():
     # Generate maze using generateMaze from the maze module
     maze, _, _ = generateMaze(10, 10)  # Adjust the maze size as needed
 
@@ -79,4 +79,4 @@ def main():
         print("No path found for at least one version of A*.")
 
 if __name__ == "__main__":
-    main()
+    calc()
