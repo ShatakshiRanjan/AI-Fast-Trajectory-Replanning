@@ -72,7 +72,7 @@ def calcAAStar(maze):
 
 mazes = []
 for i in range(0, 50):  # 50 mazes
-    maze, _, _ = generateMaze(5, 5)
+    maze, _, _ = generateMaze(101, 101)
     mazes.append(maze)
 
 
