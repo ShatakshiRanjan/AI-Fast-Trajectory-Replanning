@@ -8,12 +8,6 @@ def adaptive_a_star(maze, break_ties_smaller_g=True):
             elif maze[i, j] == 3:
                 end = (i, j)
 
-    # h_end = {}
-    # for i in range(len(maze)):
-    #     for j in range(len(maze[0])):
-    #         if maze[i, j] != 1:
-    #             h_end[(i, j)] = abs(i - end[0]) + abs(j - end[1])
-
     pq = PriorityQueue()
     pq.put((0, start))
     visited = set()
@@ -38,13 +32,14 @@ def adaptive_a_star(maze, break_ties_smaller_g=True):
                 new_cost = g[current_node] + 1
                 if (nr, nc) not in g or new_cost < g[(nr, nc)]:
                     g[(nr, nc)] = new_cost
-                    priority = new_cost + abs(nr - end[0]) + abs(nc - end[1])  # Using pre-calculated heuristic
+                    priority = new_cost + abs(nr - end[0]) + abs(nc - end[1]) 
                     if not break_ties_smaller_g:
                         priority = 100 * new_cost - g[(nr, nc)]  # Modify priority for larger g-values
                     pq.put((priority, (nr, nc)))
                     parent[(nr, nc)] = current_node
                     # Update heuristic dynamically
-                    h[(nr, nc)] = g[end] - g[(nr, nc)]  # h(s) = g(goal) - g(s)
+                    if end in g:
+                      h[(nr, nc)] = g[end] - g[(nr, nc)]  # h(s) = g(goal) - g(s)
 
     return None
 
@@ -53,12 +48,12 @@ def calc():
     # Generate maze using generateMaze from the maze module
     maze, _, _ = generateMaze(10, 10)  # Adjust the maze size as needed
 
-    # Run A* with ties broken in favor of smaller g-values
-    path_smaller_g = a_star(maze, break_ties_smaller_g=True)
+    # Run adaptive A* with ties broken in favor of smaller g-values
+    path_smaller_g = adaptive_a_star(maze, break_ties_smaller_g=True)
     print("Path found with ties broken for smaller g-values:", path_smaller_g)
 
-    # Run A* with ties broken in favor of larger g-values
-    path_larger_g = a_star(maze, break_ties_smaller_g=False)
+    # Run adaptive A* with ties broken in favor of larger g-values
+    path_larger_g = adaptive_a_star(maze, break_ties_smaller_g=False)
     print("Path found with ties broken for larger g-values:", path_larger_g)
 
 
