@@ -4,9 +4,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from maze import generateMaze
 
+
 def adaptive_a_star(maze, break_ties_smaller_g=True):
     start = None
     end = None
+    expanded_nodes = 0  # <-----
     for i in range(len(maze)):
         for j in range(len(maze[0])):
             if maze[i, j] == 2:
@@ -23,61 +25,68 @@ def adaptive_a_star(maze, break_ties_smaller_g=True):
 
     while not pq.empty():
         current_cost, current_node = pq.get()
+        expanded_nodes += 1  # <-----
         if current_node == end:
             path = []
             while current_node in parent:
                 path.insert(0, current_node)
                 current_node = parent[current_node]
             path.insert(0, start)
-            return path
+            return path, expanded_nodes  # <-----
 
         visited.add(current_node)
         for dr, dc in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
             nr, nc = current_node[0] + dr, current_node[1] + dc
-            if 0 <= nr < len(maze) and 0 <= nc < len(maze[0]) and maze[nr, nc] != 1 and (nr, nc) not in visited:
+            if (
+                0 <= nr < len(maze)
+                and 0 <= nc < len(maze[0])
+                and maze[nr, nc] != 1
+                and (nr, nc) not in visited
+            ):
                 new_cost = g[current_node] + 1
                 if (nr, nc) not in g or new_cost < g[(nr, nc)]:
                     g[(nr, nc)] = new_cost
-                    priority = new_cost + abs(nr - end[0]) + abs(nc - end[1]) 
+                    priority = new_cost + abs(nr - end[0]) + abs(nc - end[1])
                     if not break_ties_smaller_g:
-                        priority = 100 * new_cost - g[(nr, nc)]  # Modify priority for larger g-values
+                        priority = (
+                            100 * new_cost - g[(nr, nc)]
+                        )  # Modify priority for larger g-values
                     pq.put((priority, (nr, nc)))
                     parent[(nr, nc)] = current_node
                     # Update heuristic dynamically
                     if end in g:
-                      h[(nr, nc)] = g[end] - g[(nr, nc)]  # h(s) = g(goal) - g(s)
+                        h[(nr, nc)] = g[end] - g[(nr, nc)]  # h(s) = g(goal) - g(s)
 
-    return None
+    return None, expanded_nodes  # <-----
 
 
 def calc():
     # Generate maze using generateMaze from the maze module
     maze, _, _ = generateMaze(10, 10)  # Adjust the maze size as needed
 
-    # Run adaptive A* with ties broken in favor of smaller g-values
-    path_smaller_g = adaptive_a_star(maze, break_ties_smaller_g=True)
-    print("Path found with ties broken for smaller g-values:", path_smaller_g)
+    # # Run adaptive A* with ties broken in favor of smaller g-values
+    # path_smaller_g, expanded_nodes = adaptive_a_star(maze, break_ties_smaller_g=True)
+    # print("Path found with ties broken for smaller g-values:", path_smaller_g)
 
     # Run adaptive A* with ties broken in favor of larger g-values
-    path_larger_g = adaptive_a_star(maze, break_ties_smaller_g=False)
+    path_larger_g, expanded_nodes = adaptive_a_star(maze, break_ties_smaller_g=False)
     print("Path found with ties broken for larger g-values:", path_larger_g)
+    print("Number of expanded nodes", expanded_nodes)
 
+    if path_larger_g:
+        # plt.figure(figsize=(12, 6))
+        # plt.subplot(1, 2, 1)
+        # plt.title("Path with ties broken for smaller g-values")
+        # plt.imshow(maze, cmap="binary", origin="lower")
+        # for node in path_smaller_g:
+        #     plt.plot(node[1], node[0], "ro")  # Plotting the path
+        # plt.colorbar()
 
-    if path_smaller_g and path_larger_g:
-        # Visualize the maze with both paths
         plt.figure(figsize=(12, 6))
-        plt.subplot(1, 2, 1)
-        plt.title("Path with ties broken for smaller g-values")
-        plt.imshow(maze, cmap='binary', origin='lower')
-        for node in path_smaller_g:
-            plt.plot(node[1], node[0], 'ro')  # Plotting the path
-        plt.colorbar()
-
-        plt.subplot(1, 2, 2)
         plt.title("Path with ties broken for larger g-values")
-        plt.imshow(maze, cmap='binary', origin='lower')
+        plt.imshow(maze, cmap="binary", origin="lower")
         for node in path_larger_g:
-            plt.plot(node[1], node[0], 'ro')  # Plotting the path
+            plt.plot(node[1], node[0], "ro")  # Plotting the path
         plt.colorbar()
 
         plt.tight_layout()
