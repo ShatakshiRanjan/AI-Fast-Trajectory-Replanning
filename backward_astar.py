@@ -1,7 +1,7 @@
-from queue import PriorityQueue
-
 def backward_astar(maze, break_ties_smaller_g=True):
-    # Find the start (value 2) and end (value 3) positions in the maze
+    end = None
+    start = None
+
     for i in range(len(maze)):
         for j in range(len(maze[0])):
             if maze[i][j] == 2:
@@ -9,7 +9,6 @@ def backward_astar(maze, break_ties_smaller_g=True):
             elif maze[i][j] == 3:
                 end = (i, j)
     
-    # Initialize the priority queue with the end node
     pq = PriorityQueue()
     pq.put((0, end))
     visited = set()
@@ -18,13 +17,15 @@ def backward_astar(maze, break_ties_smaller_g=True):
 
     while not pq.empty():
         current_cost, current_node = pq.get()
-        if current_node == start:  # Check if we have reached the start
+        if current_node == start: 
             path = []
-            while current_node in parent:  # Backtrack to construct the path
+            while current_node in parent:  # backtracking
                 path.append(current_node)
                 current_node = parent[current_node]
-            path.append(end)  # Add the end node
-            return path[::-1]  # Reverse the path
+            path.insert(0, end);
+          #  path.append(end)  
+            return path
+          #  return path[::-1]  
 
         visited.add(current_node)
         for dr, dc in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
@@ -41,17 +42,40 @@ def backward_astar(maze, break_ties_smaller_g=True):
 
     return None
 
-# Example maze representation
-# 0 - open cell
-# 1 - obstacle
-# 2 - start
-# 3 - end
 
-maze_example = [
-    [0, 0, 0, 2],
-    [0, 1, 1, 0],
-    [0, 1, 3, 0],
-    [0, 0, 0, 0]
-]
+def calc():
+    # Generate maze using generateMaze from the maze module
+    maze, _, _ = generateMaze(10, 10)  # Adjust the maze size as needed
 
-path = backward_astar(maze_example)
+    # Run backward A* with ties broken in favor of smaller g-values
+    path_smaller_g = a_star(maze, break_ties_smaller_g=True)
+    print("Path found with ties broken for smaller g-values:", path_smaller_g)
+
+    # Run backward A* with ties broken in favor of larger g-values
+    path_larger_g = a_star(maze, break_ties_smaller_g=False)
+    print("Path found with ties broken for larger g-values:", path_larger_g)
+
+    if path_smaller_g and path_larger_g:
+        # Visualize the maze with both paths
+        plt.figure(figsize=(12, 6))
+        plt.subplot(1, 2, 1)
+        plt.title("Path with ties broken for smaller g-values")
+        plt.imshow(maze, cmap='binary', origin='lower')
+        for node in path_smaller_g:
+            plt.plot(node[1], node[0], 'ro')  # Plotting the path
+        plt.colorbar()
+
+        plt.subplot(1, 2, 2)
+        plt.title("Path with ties broken for larger g-values")
+        plt.imshow(maze, cmap='binary', origin='lower')
+        for node in path_larger_g:
+            plt.plot(node[1], node[0], 'ro')  # Plotting the path
+        plt.colorbar()
+
+        plt.tight_layout()
+        plt.show()
+    else:
+        print("No path found for at least one version of A*.")
+
+if __name__ == "__main__":
+    calc()
