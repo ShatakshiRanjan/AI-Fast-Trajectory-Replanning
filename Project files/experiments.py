@@ -29,7 +29,7 @@ def calc(maze):
 
 
 mazes = []
-for i in range(0, 50):  # 10 mazes
+for i in range(0, 50):  
     maze, _, _ = generateMaze(5, 5)
     mazes.append(maze)
 
